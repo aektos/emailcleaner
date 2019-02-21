@@ -1,0 +1,55 @@
+.brand-logo {
+    color: #424242 !important;
+}
+
+nav ul a {
+    color: #424242 !important;
+}
+
+.dropdown-content li > a,
+.dropdown-content li
+{
+    color: #424242;
+}
+
+#loader-modal {
+    min-height: 500px;
+}
+
+.dashboard-loader {
+    position: fixed !important;
+    z-index: 1000;
+}
+
+.spinner-layer {
+    border-color: #424242;
+}
+
+.card-title .badge {
+    margin: 0.5em;
+}
+
+.card-email {
+    height: 220px;
+}
+
+#dashboard-wrapper {
+    position: relative;
+    min-height: 500px;
+}
+
+#dashboard-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+#dashboard-next {
+    position: fixed;
+    bottom: 300px;
+    right: 50px;
+}
+
+#dashboard-wrapper .card .material-icons {
+    color: #424242 !important;
+}

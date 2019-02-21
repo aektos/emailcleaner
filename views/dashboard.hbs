@@ -1,0 +1,87 @@
+<div id="dashboard-wrapper">
+    <div id="loader-modal" class="modal">
+        <div class="modal-content">
+            <div id="dashboard-loader" class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-black-only">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="dashboard" class="dashboard"></div>
+    <div id="dashboard-next">
+        <a class="btn-floating btn-large grey darken-3 right" href="/signout">
+            <i class="material-icons">navigate_next</i>
+        </a>
+    </div>
+</div>
+
+<script id="clean" type="text/x-handlebars-template">
+    <div class="section no-pad-bot">
+        <div class="container">
+            <h1 class="grey-text darken-3-text">Your e-mails</h1>
+            <div class="row">
+                <ul>
+                    \{{#each emailIndex.emails}}
+                        <li id="\{{this.key}}" data-messages="[\{{#each this.messages}}'\{{this}}',\{{/each}}]" data-isNewsletter="false">
+                            <div class="col s12 m4">
+                                <div class="card card-email grey darken-3">
+                                    <div class="card-title">
+                                        \{{#if this.size}}
+                                        <div><span class="badge white">\{{{this.size}}} emails</span></div>
+                                        \{{/if}}
+                                        \{{#if this.isNewsletter}}
+                                        <div><span class="badge white">Newsletter</span></div>
+                                        \{{/if}}
+                                    </div>
+                                    <div class="card-content white-text">
+                                        <h5>\{{this.from}}</h5>
+                                    </div>
+                                    <div class="card-action">
+                                        \{{#if this.content}}
+                                        <!-- Modal Trigger -->
+                                        <a class="btn btn-small modal-trigger orange lighten-2" href="#modal\{{this.key}}">
+                                            <i class="material-icons">remove_red_eye</i>
+                                        </a>
+                                        <!-- Modal Structure -->
+                                        <div id="modal\{{this.key}}" class="modal modal-fixed-footer modal-emailview">
+                                            <div class="modal-content">
+                                                <div>
+                                                    \{{{this.content}}}
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="#!"
+                                                   class="modal-close waves-effect waves-green btn-flat">Close</a>
+                                            </div>
+                                        </div>
+                                        \{{/if}}
+                                        \{{#if this.link }}
+                                        <a class="btn btn-small orange lighten-2" href="\{{this.link}}" target="_blank">
+                                            <i class="grey-text material-icons">remove_circle</i>
+                                        </a>
+                                        \{{/if}}
+                                        \{{#if this.messages }}
+                                        <a class="btn btn-small orange lighten-2" href="#!"
+                                           onclick="if (confirm('Are you sure you want to delete this item?')) { window.app.delete('\{{this.key}}', [\{{#each this.messages}}'\{{this}}',\{{/each}}]); }">
+                                            <i class="material-icons">delete</i>
+                                        </a>
+                                        \{{/if}}
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    \{{/each}}
+                </ul>
+            </div>
+        </div>
+    </div>
+</script>
