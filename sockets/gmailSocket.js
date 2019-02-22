@@ -17,7 +17,8 @@ module.exports = (socket) => {
                 .then(() => {
                     // var endTime = Date.now();
                     // console.log('Execution time: ' + parseInt(endTime - startTime) + 'ms');
-                    let emailIndex = sorterServices.index;
+                    let emailIndex = sorterServices.getIndexToArray();
+                    gmailSorterServices.sortIndexByNbEmails(emailIndex);
                     socket.emit('cleaned', emailIndex);
                 })
                 .catch((err) => {

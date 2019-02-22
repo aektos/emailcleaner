@@ -10,7 +10,7 @@ const NB_TD_NEWSLETTER = 5;
 /**
  * Module pour indexer et trier les messages
  */
-var outlookoutlookSorterServices = {
+var outlookSorterServices = {
     index: {
         'emails': {}
     },
@@ -48,7 +48,7 @@ var outlookoutlookSorterServices = {
         outlookSorterServices.index['emails'][key]['size']++;
         outlookSorterServices.index['emails'][key]['isNewsletter'] = outlookSorterServices.index['emails'][key]['isNewsletter'] ? true : outlookSorterServices.isNewsLetterEmail(message);
         outlookSorterServices.index['emails'][key]['link'] = outlookSorterServices.index['emails'][key]['link'] ? outlookSorterServices.index['emails'][key]['links'] : outlookSorterServices.getUnSubscribeLink(message);
-        outlookSorterServices.index['emails'][key]['content'] = outlookSorterServices.index['emails'][key]['content'] ? outlookSorterServices.index['emails'][key]['content'] : outlookoutlookSorterServices.getContent(message);
+        outlookSorterServices.index['emails'][key]['content'] = outlookSorterServices.index['emails'][key]['content'] ? outlookSorterServices.index['emails'][key]['content'] : outlookSorterServices.getContent(message);
         outlookSorterServices.index['emails'][key]['messages'].push(message.id);
     },
 
@@ -92,17 +92,37 @@ var outlookoutlookSorterServices = {
         } else {
             return '';
         }
+    },
+
+    getIndexToArray: () => {
+        let arr = [];
+        for (let prop in outlookSorterServices.index['emails']) {
+            arr.push(outlookSorterServices.index['emails'][prop]);
+        }
+        return arr;
+    },
+
+    /**
+     * Sort index by nb emails
+     *
+     * @param index
+     * @returns {*}
+     */
+    sortIndexByNbEmails: (index) => {
+        return index.sort((a,b) => {
+            return a.size > b.size ? -1 : 1;
+        });
     }
 };
 
 /**
  * Singleton object definition
  */
-outlookoutlookSorterServices.getInstance = function () {
+outlookSorterServices.getInstance = function () {
     if (typeof global.outlookSorterServices === "undefined") {
         global.outlookSorterServices = this;
     }
     return global.outlookSorterServices;
 };
 
-module.exports = outlookoutlookSorterServices.getInstance();
+module.exports = outlookSorterServices.getInstance();
