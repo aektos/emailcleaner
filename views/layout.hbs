@@ -16,8 +16,8 @@
 <nav class="orange lighten-2" role="navigation">
     <div class="nav-wrapper container">
         <a id="logo-container" href="#!" class="brand-logo">Email Cleaner</a>
-        {{#if user.email}}
-            <ul class="right hide-on-med-and-down">
+        <ul class="right hide-on-med-and-down">
+            {{#if user.email}}
                 <li>
                     <a class="dropdown-trigger" href="#!" data-target="user-dropdown">
                         {{user.email}}
@@ -29,13 +29,21 @@
                         </li>
                     </ul>
                 </li>
-            </ul>
-        {{/if}}
+            {{else}}
+                <li>
+                    <a href="/">Nettoyer votre boîte mail</a>
+                </li>
+            {{/if}}
+        </ul>
 
         <ul id="nav-mobile" class="sidenav">
             {{#if user.email}}
                 <li>
                     <h5>{{user.email}}</h5>
+                </li>
+            {{else}}
+                <li>
+                    <a href="/">Nettoyer votre boîte mail</a>
                 </li>
             {{/if}}
             <li>
