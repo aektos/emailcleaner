@@ -123,6 +123,26 @@ var gmailSorterServices = {
     getContent: (htmlBody) => {
         let $ = cheerio.load(htmlBody);
         return $('body').html();
+    },
+
+    getIndexToArray: () => {
+        let arr = [];
+        for (let prop in gmailSorterServices.index['emails']) {
+            arr.push(gmailSorterServices.index['emails'][prop]);
+        }
+        return arr;
+    },
+
+    /**
+     * Sort index by nb emails
+     *
+     * @param index
+     * @returns {*}
+     */
+    sortIndexByNbEmails: (index) => {
+        return index.sort((a,b) => {
+            return a.size > b.size ? -1 : 1;
+        });
     }
 };
 

@@ -10,7 +10,8 @@ module.exports = (socket) => {
                 .then(() => {
                     // var endTime = Date.now();
                     // console.log('Execution time: ' + parseInt(endTime - startTime) + 'ms');
-                    var emailIndex = sorterServices.index;
+                    let emailIndex = sorterServices.getIndexToArray();
+                    outlookSorterServices.sortIndexByNbEmails(emailIndex);
                     socket.emit('cleaned', emailIndex);
                 })
                 .catch((err) => {
