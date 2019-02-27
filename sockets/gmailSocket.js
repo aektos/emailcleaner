@@ -1,14 +1,11 @@
-const {google} = require('googleapis');
-
 const googleServices = require('../services/googleServices');
 const gmailServices = require('../services/gmailServices');
-const sorterServices = require('../services/gmailSorterServices');
+const gmailSorterServices = require('../services/gmailSorterServices');
 
 module.exports = (socket) => {
     socket.on('gmail-clean', () => {
         if (socket.handshake.session.token) {
             googleServices.oAuth2Client.setCredentials(socket.handshake.session.token);
-            sorterServices.init();
             // var startTime = Date.now();
             gmailServices.listMessages(null)
                 .then((messages) => {
@@ -17,7 +14,7 @@ module.exports = (socket) => {
                 .then(() => {
                     // var endTime = Date.now();
                     // console.log('Execution time: ' + parseInt(endTime - startTime) + 'ms');
-                    let emailIndex = sorterServices.getIndexToArray();
+                    let emailIndex = gmailSorterServices.getIndexToArray();
                     gmailSorterServices.sortIndexByNbEmails(emailIndex);
                     socket.emit('cleaned', emailIndex);
                 })

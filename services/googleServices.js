@@ -24,18 +24,21 @@ const scopes = [
 ];
 
 /**
- * Module to interact with GMAIL API
+ * Class to interact with GMAIL API
  */
-var googleServices = {
+class GoogleServices {
 
-    /**
-     * Google oAuth2 client
-     */
-    oAuth2Client: new google.auth.OAuth2(
-        keys.client_id,
-        keys.client_secret,
-        redirectUri
-    ),
+    constructor () {
+
+        /**
+         * Google oAuth2 client
+         */
+        this.oAuth2Client = new google.auth.OAuth2(
+            keys.client_id,
+            keys.client_secret,
+            redirectUri
+        );
+    }
 
     /**
      * Generate URL to authorize web app
@@ -43,12 +46,18 @@ var googleServices = {
 
      * @returns string
      */
-    generateAuthUrl: () => {
-        return googleServices.oAuth2Client.generateAuthUrl({
+    generateAuthUrl() {
+        return this.oAuth2Client.generateAuthUrl({
             access_type: 'offline',
             scope: scopes.join(' ')
         });
     }
-};
+}
 
-module.exports = googleServices;
+/**
+ * Singleton object definition
+ */
+const googleServicesObj = new GoogleServices();
+Object.freeze(googleServicesObj);
+
+module.exports = googleServicesObj;
