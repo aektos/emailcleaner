@@ -1,71 +1,65 @@
 const MD5 = require('md5.js')
 const cheerio = require('cheerio')
+const BaseSorterServices = require('./BaseSorterServices');
 
 /**
- * Nombre de <td> et </td> à compter
- * pour considérer le message est une newsletter
+ * Number of <td> et </td> to
+ * consider an email as a newsletter
  */
 const NB_TD_NEWSLETTER = 5;
 
 /**
- * Module pour indexer et trier les messages
+ * Class to index and sort emails
  */
-var gmailSorterServices = {
-    index: {
-        'emails': {}
-    },
+class GmailSorterServices extends BaseSorterServices {
 
     /**
-     * Initialise l'index
+     * Init index
      */
-    init: () => {
-        gmailSorterServices.index = {
+    constructor() {
+        super();
+        this.index = {
             'emails': {}
         };
-    },
+    }
 
     /**
-     * Enregistre dans l'index des infos
-     * sur le message
+     * Build emails index
      *
      * @param message
      * @returns bool
      */
-    indexByEmail: (message) => {
+    indexByEmail(message) {
         var key = null;
-        var htmlBody = "";
-        if (typeof gmailSorterServices.index['emails'] === "undefined") {
-            gmailSorterServices.init();
-        }
         message.data.payload.headers.forEach((header, i) => {
             key = new MD5().update(header.value).digest('hex');
             if (header.name === "From") {
-                if (typeof gmailSorterServices.index['emails'][key] === "undefined") {
-                    gmailSorterServices.index['emails'][key] = {
+                if (typeof this.index['emails'][key] === "undefined") {
+                    this.index['emails'][key] = {
                         'key': key,
                         'from': header.value.replace(/<[^>]*>/,''),
                         'size': 0,
                         'messages': []
                     }
                 }
-                let htmlBody = gmailSorterServices.getHtmlBodyEmail(message);
+                let htmlBody = this.getHtmlBodyEmail(message);
 
-                gmailSorterServices.index['emails'][key]['size']++;
-                gmailSorterServices.index['emails'][key]['isNewsletter'] = gmailSorterServices.index['emails'][key]['isNewsletter'] ? true : gmailSorterServices.isNewsLetterEmail(htmlBody);
-                gmailSorterServices.index['emails'][key]['link'] = gmailSorterServices.index['emails'][key]['link'] ? gmailSorterServices.index['emails'][key]['links'] : gmailSorterServices.getUnSubscribeLink(htmlBody);
-                gmailSorterServices.index['emails'][key]['content'] = gmailSorterServices.index['emails'][key]['content'] ? gmailSorterServices.index['emails'][key]['content'] : gmailSorterServices.getContent(htmlBody);
-                gmailSorterServices.index['emails'][key]['messages'].push(message.data.id);
+                this.index['emails'][key]['size']++;
+                this.index['emails'][key]['isNewsletter'] = this.index['emails'][key]['isNewsletter'] ? true : this.isNewsLetterEmail(htmlBody);
+                this.index['emails'][key]['link'] = this.index['emails'][key]['link'] ? this.index['emails'][key]['links'] : this.getUnSubscribeLink(htmlBody);
+                this.index['emails'][key]['content'] = this.index['emails'][key]['content'] ? this.index['emails'][key]['content'] : this.getContent(htmlBody);
+                this.index['emails'][key]['messages'].push(message.data.id);
             }
         });
-    },
+    }
 
     /**
-     * Retourne le corps HTML du message
+     * Get HTML body message
      *
      * @param message
      * @returns string
      */
-    getHtmlBodyEmail: (message) => {
+    getHtmlBodyEmail(message) {
         var htmlBody = "";
 
         if (typeof message.data !== 'undefined' &&
@@ -88,31 +82,29 @@ var gmailSorterServices = {
 
         htmlBody = new Buffer.from(htmlBody, 'base64').toString('utf-8');
         return htmlBody;
-    },
+    }
 
     /**
-     * Retourne vrai si le message ressemble
-     * à une newsletter
+     * Is an email a newsletter?
      *
      * @param htmlBody
      * @returns bool
      */
-    isNewsLetterEmail: (htmlBody) => {
+    isNewsLetterEmail(htmlBody) {
         let $ = cheerio.load(htmlBody);
         return $('td').length > NB_TD_NEWSLETTER
-    },
+    }
 
     /**
-     * Retourne les liens de désabonnements
-     * à une newsletter
+     * Get unsubscribe newsletter link
      *
      * @param htmlBody
      * @returns {*|*|*|jQuery}
      */
-    getUnSubscribeLink: (htmlBody) => {
+    getUnSubscribeLink(htmlBody) {
         let $ = cheerio.load(htmlBody);
         return $('a:contains("abonnements"), a:contains("abonner")').attr('href');
-    },
+    }
 
     /**
      * Get message HTML content
@@ -120,40 +112,16 @@ var gmailSorterServices = {
      * @param htmlBody
      * @returns {never|string|*|*|void|jQuery}
      */
-    getContent: (htmlBody) => {
+    getContent(htmlBody) {
         let $ = cheerio.load(htmlBody);
         return $('body').html();
-    },
-
-    getIndexToArray: () => {
-        let arr = [];
-        for (let prop in gmailSorterServices.index['emails']) {
-            arr.push(gmailSorterServices.index['emails'][prop]);
-        }
-        return arr;
-    },
-
-    /**
-     * Sort index by nb emails
-     *
-     * @param index
-     * @returns {*}
-     */
-    sortIndexByNbEmails: (index) => {
-        return index.sort((a,b) => {
-            return a.size > b.size ? -1 : 1;
-        });
     }
-};
+}
 
 /**
  * Singleton object definition
  */
-gmailSorterServices.getInstance = function () {
-    if (typeof global.gmailSorterServices === "undefined") {
-        global.gmailSorterServices = this;
-    }
-    return global.gmailSorterServices;
-};
+const gmailSorterServicesObj = new GmailSorterServices();
+Object.freeze(gmailSorterServicesObj);
 
-module.exports = gmailSorterServices.getInstance();
+module.exports = gmailSorterServicesObj;

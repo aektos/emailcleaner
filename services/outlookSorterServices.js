@@ -1,83 +1,76 @@
 const MD5 = require('md5.js');
 const cheerio = require('cheerio');
+const BaseSorterServices = require('./BaseSorterServices');
 
 /**
- * Nombre de <td> et </td> à compter
- * pour considérer le message est une newsletter
+ * Number of <td> et </td> to
+ * consider an email as a newsletter
  */
 const NB_TD_NEWSLETTER = 5;
 
 /**
- * Module pour indexer et trier les messages
+ * Class to index and sort emails
  */
-var outlookSorterServices = {
-    index: {
-        'emails': {}
-    },
+class OutlookSorterServices extends BaseSorterServices {
 
     /**
-     * Initialise l'index
+     * Init index
      */
-    init: () => {
-        outlookSorterServices.index = {
+    constructor() {
+        super();
+        this.index = {
             'emails': {}
         };
-    },
+    }
 
     /**
-     * Enregistre dans l'index des infos
-     * sur le message
+     * Build an email index
      *
      * @param message
      * @returns bool
      */
-    indexByEmail: (message) => {
+    indexByEmail(message) {
         let key;
-        if (typeof outlookSorterServices.index['emails'] === "undefined") {
-            outlookSorterServices.init();
-        }
         key = new MD5().update(message.from.emailAddress.address).digest('hex');
-        if (typeof outlookSorterServices.index['emails'][key] === "undefined") {
-            outlookSorterServices.index['emails'][key] = {
+        if (typeof this.index['emails'][key] === "undefined") {
+            this.index['emails'][key] = {
                 'key': key,
                 'from': message.from.emailAddress.address,
                 'size': 0,
                 'messages': []
             }
         }
-        outlookSorterServices.index['emails'][key]['size']++;
-        outlookSorterServices.index['emails'][key]['isNewsletter'] = outlookSorterServices.index['emails'][key]['isNewsletter'] ? true : outlookSorterServices.isNewsLetterEmail(message);
-        outlookSorterServices.index['emails'][key]['link'] = outlookSorterServices.index['emails'][key]['link'] ? outlookSorterServices.index['emails'][key]['links'] : outlookSorterServices.getUnSubscribeLink(message);
-        outlookSorterServices.index['emails'][key]['content'] = outlookSorterServices.index['emails'][key]['content'] ? outlookSorterServices.index['emails'][key]['content'] : outlookSorterServices.getContent(message);
-        outlookSorterServices.index['emails'][key]['messages'].push(message.id);
-    },
+        this.index['emails'][key]['size']++;
+        this.index['emails'][key]['isNewsletter'] = this.index['emails'][key]['isNewsletter'] ? true : this.isNewsLetterEmail(message);
+        this.index['emails'][key]['link'] = this.index['emails'][key]['link'] ? this.index['emails'][key]['links'] : this.getUnSubscribeLink(message);
+        this.index['emails'][key]['content'] = this.index['emails'][key]['content'] ? this.index['emails'][key]['content'] : this.getContent(message);
+        this.index['emails'][key]['messages'].push(message.id);
+    }
 
     /**
-     * Retourne vrai si le message ressemble
-     * à une newsletter
+     * Is an email a newsletter?
      *
      * @param message
      * @returns bool
      */
-    isNewsLetterEmail: (message) => {
+    isNewsLetterEmail(message) {
         if(typeof message.body.content === "undefined") {
             return false;
         }
         let $ = cheerio.load(message.body.content);
         return $('td').length > NB_TD_NEWSLETTER;
-    },
+    }
 
     /**
-     * Retourne les liens de désabonnements
-     * à une newsletter
+     * Get unsubscribe newsletter link
      *
      * @param message
      * @returns {*|*|*|jQuery}
      */
-    getUnSubscribeLink: (message) => {
+    getUnSubscribeLink(message) {
         let $ = cheerio.load(message.body.content);
         return $('a:contains("abonnements"), a:contains("alertes"), a:contains("abonner")').attr('href');
-    },
+    }
 
     /**
      * Get message HTML content
@@ -85,44 +78,20 @@ var outlookSorterServices = {
      * @param message
      * @returns {*}
      */
-    getContent: (message) => {
+    getContent(message) {
         if (typeof message.body !== 'undefined' && typeof message.body.content !== 'undefined') {
             let $ = cheerio.load(message.body.content);
             return $('body').html();
         } else {
             return '';
         }
-    },
-
-    getIndexToArray: () => {
-        let arr = [];
-        for (let prop in outlookSorterServices.index['emails']) {
-            arr.push(outlookSorterServices.index['emails'][prop]);
-        }
-        return arr;
-    },
-
-    /**
-     * Sort index by nb emails
-     *
-     * @param index
-     * @returns {*}
-     */
-    sortIndexByNbEmails: (index) => {
-        return index.sort((a,b) => {
-            return a.size > b.size ? -1 : 1;
-        });
     }
-};
+}
 
 /**
  * Singleton object definition
  */
-outlookSorterServices.getInstance = function () {
-    if (typeof global.outlookSorterServices === "undefined") {
-        global.outlookSorterServices = this;
-    }
-    return global.outlookSorterServices;
-};
+const outlookSorterServicesObj = new OutlookSorterServices();
+Object.freeze(outlookSorterServicesObj);
 
-module.exports = outlookSorterServices.getInstance();
+module.exports = outlookSorterServicesObj;

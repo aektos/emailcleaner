@@ -53,7 +53,8 @@ router.get('/dashboard', (req, res, next) => {
     if (!req.session.token) {
         res.redirect("/outlook/authorize");
     } else {
-        outlookServices.getProfile(req.session.token)
+        outlookServices.getOutlook(req.session.token);
+        outlookServices.getProfile()
             .then((user) => {
                 res.render('dashboard', {user: user});
             })
