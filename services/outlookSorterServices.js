@@ -18,9 +18,6 @@ class OutlookSorterServices extends BaseSorterServices {
      */
     constructor() {
         super();
-        this.index = {
-            'emails': {}
-        };
     }
 
     /**

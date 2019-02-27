@@ -4,7 +4,6 @@ const fs = require('fs');
 
 const microsoftServices = require('../services/microsoftServices');
 const outlookServices = require('../services/outlookServices');
-const config = require('../config/config');
 
 /**
  * Generate and redirect to Microsoft URL
@@ -12,10 +11,6 @@ const config = require('../config/config');
  */
 router.get('/authorize', (req, res, next) => {
     if (req.session.token_outlook) {
-        res.redirect("/outlook/dashboard");
-    } else if (process.env.NODE_ENV === 'development' && fs.existsSync(config.TOKEN_OUTLOOK_PATH)) {
-        let token = fs.readFileSync(config.TOKEN_OUTLOOK_PATH, 'UTF-8');
-        req.session.token_outlook = JSON.parse(token);
         res.redirect("/outlook/dashboard");
     } else {
         let authorizeUrl = microsoftServices.generateAuthUrl();
@@ -33,9 +28,6 @@ router.get('/auth', (req, res, next) => {
         microsoftServices.getTokenFromCode(code)
             .then((token) => {
                 req.session.token_outlook = token;
-                if (process.env.NODE_ENV === 'development') {
-                    fs.writeFileSync(config.TOKEN_OUTLOOK_PATH, JSON.stringify(token), 'UTF-8');
-                }
                 res.redirect("/outlook/dashboard");
             })
             .catch((err) => {

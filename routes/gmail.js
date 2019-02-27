@@ -4,7 +4,6 @@ const fs = require('fs');
 
 const googleServices = require('../services/googleServices');
 const gmailServices = require('../services/gmailServices');
-const config = require('../config/config');
 
 /**
  * Generate and redirect to Google URL
@@ -12,10 +11,6 @@ const config = require('../config/config');
  */
 router.get('/authorize', (req, res, next) => {
     if (req.session.token_gmail) {
-        res.redirect("/gmail/dashboard");
-    } else if (process.env.NODE_ENV === 'development' && fs.existsSync(config.TOKEN_GMAIL_PATH)) {
-        let token = fs.readFileSync(config.TOKEN_GMAIL_PATH, 'UTF-8');
-        req.session.token = JSON.parse(token);
         res.redirect("/gmail/dashboard");
     } else {
         let authorizeUrl = googleServices.generateAuthUrl();
@@ -35,9 +30,6 @@ router.get('/auth', (req, res, next) => {
                     next(err);
                 }
                 req.session.token_gmail = token;
-                if (process.env.NODE_ENV === 'development') {
-                    fs.writeFileSync(config.TOKEN_GMAIL_PATH, JSON.stringify(token), 'UTF-8');
-                }
                 res.redirect("/gmail/dashboard");
             }
         );

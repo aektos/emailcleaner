@@ -4,6 +4,15 @@
 class BaseSorterServices {
 
     /**
+     * Init index
+     */
+    constructor() {
+        this.index = {
+            'emails': {}
+        };
+    }
+
+    /**
      * Get emails index to array
      *
      * @returns {Array}
@@ -27,6 +36,13 @@ class BaseSorterServices {
         return index.sort((a,b) => {
             return a.size > b.size ? -1 : 1;
         });
+    }
+
+    /**
+     * Reset the email index
+     */
+    reset() {
+        this.index['emails'] = {};
     }
 }
 

@@ -11,6 +11,7 @@ module.exports = (socket) => {
                     var endTime = Date.now();
                     console.log('Outlook-clean time: ' + parseInt(endTime - startTime) + 'ms ');
                     let emailIndex = outlookSorterServices.getEmailsIndexToArray();
+                    outlookSorterServices.reset();
                     socket.emit('cleaned', emailIndex);
                 })
                 .catch((err) => {

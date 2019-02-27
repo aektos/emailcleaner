@@ -15,6 +15,7 @@ module.exports = (socket) => {
                     var endTime = Date.now();
                     console.log('Gmail-clean time: ' + parseInt(endTime - startTime) + 'ms ');
                     let emailIndex = gmailSorterServices.getEmailsIndexToArray();
+                    gmailSorterServices.reset();
                     socket.emit('cleaned', emailIndex);
                 })
                 .catch((err) => {
