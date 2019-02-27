@@ -3,9 +3,9 @@ const outlookSorterServices = require('../services/outlookSorterServices');
 
 module.exports = (socket) => {
     socket.on('outlook-clean', () => {
-        if (socket.handshake.session.token) {
+        if (socket.handshake.session.token_outlook) {
             var startTime = Date.now();
-            outlookServices.getOutlook(socket.handshake.session.token);
+            outlookServices.getOutlook(socket.handshake.session.token_outlook);
             outlookServices.listMessages()
                 .then(() => {
                     var endTime = Date.now();
@@ -23,8 +23,8 @@ module.exports = (socket) => {
     });
 
     socket.on('outlook-delete', (data) => {
-        if (socket.handshake.session.token) {
-            outlookServices.getOutlook(socket.handshake.session.token);
+        if (socket.handshake.session.token_outlook) {
+            outlookServices.getOutlook(socket.handshake.session.token_outlook);
             outlookServices.trashAllMessages(data.messages)
                 .then(() => {
                     socket.handshake.session.nb_deleted += data.messages.length;

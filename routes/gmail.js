@@ -11,10 +11,10 @@ const config = require('../config/config');
  * to authorize the web app
  */
 router.get('/authorize', (req, res, next) => {
-    if (req.session.token) {
+    if (req.session.token_gmail) {
         res.redirect("/gmail/dashboard");
-    } else if (process.env.NODE_ENV === 'development' && fs.existsSync(config.TOKEN_PATH)) {
-        let token = fs.readFileSync(config.TOKEN_PATH, 'UTF-8');
+    } else if (process.env.NODE_ENV === 'development' && fs.existsSync(config.TOKEN_GMAIL_PATH)) {
+        let token = fs.readFileSync(config.TOKEN_GMAIL_PATH, 'UTF-8');
         req.session.token = JSON.parse(token);
         res.redirect("/gmail/dashboard");
     } else {
@@ -34,9 +34,9 @@ router.get('/auth', (req, res, next) => {
                 if (err) {
                     next(err);
                 }
-                req.session.token = token;
+                req.session.token_gmail = token;
                 if (process.env.NODE_ENV === 'development') {
-                    fs.writeFileSync(config.TOKEN_PATH, JSON.stringify(token), 'UTF-8');
+                    fs.writeFileSync(config.TOKEN_GMAIL_PATH, JSON.stringify(token), 'UTF-8');
                 }
                 res.redirect("/gmail/dashboard");
             }
@@ -50,10 +50,10 @@ router.get('/auth', (req, res, next) => {
  * Main dashboard of the GMAIL cleaning operation
  */
 router.get('/dashboard', (req, res, next) => {
-    if (!req.session.token) {
+    if (!req.session.token_gmail) {
         res.redirect("/gmail/authorize");
     } else {
-        googleServices.oAuth2Client.setCredentials(req.session.token);
+        googleServices.oAuth2Client.setCredentials(req.session.token_gmail);
         gmailServices.getProfile()
             .then((user) => {
                 res.render('dashboard', {

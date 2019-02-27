@@ -11,11 +11,11 @@ const config = require('../config/config');
  * to authorize the web app
  */
 router.get('/authorize', (req, res, next) => {
-    if (req.session.token) {
+    if (req.session.token_outlook) {
         res.redirect("/outlook/dashboard");
-    } else if (process.env.NODE_ENV === 'development' && fs.existsSync(config.TOKEN_PATH)) {
-        let token = fs.readFileSync(config.TOKEN_PATH, 'UTF-8');
-        req.session.token = JSON.parse(token);
+    } else if (process.env.NODE_ENV === 'development' && fs.existsSync(config.TOKEN_OUTLOOK_PATH)) {
+        let token = fs.readFileSync(config.TOKEN_OUTLOOK_PATH, 'UTF-8');
+        req.session.token_outlook = JSON.parse(token);
         res.redirect("/outlook/dashboard");
     } else {
         let authorizeUrl = microsoftServices.generateAuthUrl();
@@ -32,9 +32,9 @@ router.get('/auth', (req, res, next) => {
     if (code) {
         microsoftServices.getTokenFromCode(code)
             .then((token) => {
-                req.session.token = token;
+                req.session.token_outlook = token;
                 if (process.env.NODE_ENV === 'development') {
-                    fs.writeFileSync(config.TOKEN_PATH, JSON.stringify(token), 'UTF-8');
+                    fs.writeFileSync(config.TOKEN_OUTLOOK_PATH, JSON.stringify(token), 'UTF-8');
                 }
                 res.redirect("/outlook/dashboard");
             })
@@ -50,10 +50,10 @@ router.get('/auth', (req, res, next) => {
  * Main dashboard of the OUTLOOK cleaning operation
  */
 router.get('/dashboard', (req, res, next) => {
-    if (!req.session.token) {
+    if (!req.session.token_outlook) {
         res.redirect("/outlook/authorize");
     } else {
-        outlookServices.getOutlook(req.session.token);
+        outlookServices.getOutlook(req.session.token_outlook);
         outlookServices.getProfile()
             .then((user) => {
                 res.render('dashboard', {user: user});

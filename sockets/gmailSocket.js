@@ -4,8 +4,8 @@ const gmailSorterServices = require('../services/gmailSorterServices');
 
 module.exports = (socket) => {
     socket.on('gmail-clean', () => {
-        if (socket.handshake.session.token) {
-            googleServices.oAuth2Client.setCredentials(socket.handshake.session.token);
+        if (socket.handshake.session.token_gmail) {
+            googleServices.oAuth2Client.setCredentials(socket.handshake.session.token_gmail);
             var startTime = Date.now();
             gmailServices.listMessages(null)
                 .then((messages) => {
@@ -27,8 +27,8 @@ module.exports = (socket) => {
     });
 
     socket.on('gmail-delete', (data) => {
-        if (socket.handshake.session.token) {
-            googleServices.oAuth2Client.setCredentials(socket.handshake.session.token);
+        if (socket.handshake.session.token_gmail) {
+            googleServices.oAuth2Client.setCredentials(socket.handshake.session.token_gmail);
             gmailServices.trashAllMessages(data.messages)
                 .then(() => {
                     socket.handshake.session.nb_deleted += data.messages.length;

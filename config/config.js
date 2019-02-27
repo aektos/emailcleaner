@@ -18,6 +18,12 @@ if (process.env.NODE_ENV === 'development') {
  * TOKEN PATH
  * Path to a file containing access token for Google API
  */
-config.TOKEN_PATH = '/tmp/token.json';
+config.TOKEN_GMAIL_PATH = '/tmp/token_gmail.json';
+
+/**
+ * TOKEN PATH
+ * Path to a file containing access token for Google API
+ */
+config.TOKEN_OUTLOOK_PATH = '/tmp/token_outlook.json';
 
 module.exports = config;
