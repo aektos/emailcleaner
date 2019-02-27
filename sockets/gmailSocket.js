@@ -6,14 +6,14 @@ module.exports = (socket) => {
     socket.on('gmail-clean', () => {
         if (socket.handshake.session.token) {
             googleServices.oAuth2Client.setCredentials(socket.handshake.session.token);
-            // var startTime = Date.now();
+            var startTime = Date.now();
             gmailServices.listMessages(null)
                 .then((messages) => {
                     return gmailServices.getAllMessages(messages);
                 })
                 .then(() => {
-                    // var endTime = Date.now();
-                    // console.log('Execution time: ' + parseInt(endTime - startTime) + 'ms');
+                    var endTime = Date.now();
+                    console.log('Gmail-clean time: ' + parseInt(endTime - startTime) + 'ms ');
                     let emailIndex = gmailSorterServices.getEmailsIndexToArray();
                     socket.emit('cleaned', emailIndex);
                 })
@@ -33,6 +33,7 @@ module.exports = (socket) => {
                 .then(() => {
                     socket.handshake.session.nb_deleted += data.messages.length;
                     socket.handshake.session.save();
+                    console.log('Gmail-delete msg.length: ' + data.messages.length + ' ');
                     socket.emit('deleted', {
                         id: data.id,
                         nb_deleted: data.messages.length,

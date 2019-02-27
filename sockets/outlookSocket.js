@@ -4,12 +4,12 @@ const outlookSorterServices = require('../services/outlookSorterServices');
 module.exports = (socket) => {
     socket.on('outlook-clean', () => {
         if (socket.handshake.session.token) {
-            // var startTime = Date.now();
+            var startTime = Date.now();
             outlookServices.getOutlook(socket.handshake.session.token);
             outlookServices.listMessages()
                 .then(() => {
-                    // var endTime = Date.now();
-                    // console.log('Execution time: ' + parseInt(endTime - startTime) + 'ms');
+                    var endTime = Date.now();
+                    console.log('Outlook-clean time: ' + parseInt(endTime - startTime) + 'ms ');
                     let emailIndex = outlookSorterServices.getEmailsIndexToArray();
                     socket.emit('cleaned', emailIndex);
                 })
@@ -29,6 +29,7 @@ module.exports = (socket) => {
                 .then(() => {
                     socket.handshake.session.nb_deleted += data.messages.length;
                     socket.handshake.session.save();
+                    console.log('Outlook-delete msg.length: ' + data.messages.length + ' ');
                     socket.emit('deleted', {
                         id: data.id,
                         nb_deleted: data.messages.length,
