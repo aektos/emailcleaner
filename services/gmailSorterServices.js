@@ -1,5 +1,6 @@
 const MD5 = require('md5.js')
 const cheerio = require('cheerio')
+const BaseSorterServices = require('./BaseSorterServices');
 
 /**
  * Number of <td> et </td> to
@@ -10,12 +11,13 @@ const NB_TD_NEWSLETTER = 5;
 /**
  * Class to index and sort emails
  */
-class GmailSorterServices {
+class GmailSorterServices extends BaseSorterServices {
 
     /**
      * Init index
      */
     constructor() {
+        super();
         this.index = {
             'emails': {}
         };
@@ -113,31 +115,6 @@ class GmailSorterServices {
     getContent(htmlBody) {
         let $ = cheerio.load(htmlBody);
         return $('body').html();
-    }
-
-    /**
-     * Get emails index to array
-     *
-     * @returns {Array}
-     */
-    getIndexToArray() {
-        let arr = [];
-        for (let prop in this.index['emails']) {
-            arr.push(this.index['emails'][prop]);
-        }
-        return arr;
-    }
-
-    /**
-     * Sort index by nb emails
-     *
-     * @param index
-     * @returns {*}
-     */
-    sortIndexByNbEmails(index) {
-        return index.sort((a,b) => {
-            return a.size > b.size ? -1 : 1;
-        });
     }
 }
 
