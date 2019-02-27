@@ -8,28 +8,28 @@ if (process.env.NODE_ENV === 'development') {
 const oauth2 = require('simple-oauth2').create(keyFile.credentials);
 
 /**
- * Module to oAuth2Client MICROSOFT
+ * Class to oAuth2Client MICROSOFT
  */
-var microsoftServices = {
+class MicrosoftServices {
     /**
      * Generate URL to authorize web app
      * and get access token
      *
      * @returns string
      */
-    generateAuthUrl: () => {
+    generateAuthUrl() {
         return oauth2.authorizationCode.authorizeURL({
             redirect_uri: keyFile.app.redirect_uri,
             scope: keyFile.app.app_scopes
         });
-    },
+    }
 
     /**
      * Get access token from code
      *
      * @returns {promise}
      */
-    getTokenFromCode: (auth_code) => {
+    getTokenFromCode(auth_code) {
         return new Promise((resolve, reject) => {
             oauth2.authorizationCode.getToken({
                     code: auth_code,
@@ -45,6 +45,12 @@ var microsoftServices = {
                 })
         });
     }
-};
+}
 
-module.exports = microsoftServices;
+/**
+ * Singleton object definition
+ */
+const microsoftServicesObj = new MicrosoftServices();
+Object.freeze(microsoftServicesObj);
+
+module.exports = microsoftServicesObj;
