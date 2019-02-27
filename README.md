@@ -1,4 +1,4 @@
-# Email Cleaner
+# EmailCleaner
 
 https://emailcleaner.herokuapp.com
 

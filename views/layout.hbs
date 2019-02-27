@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
-    <title>Email Cleaner</title>
+    <title>EmailCleaner</title>
 
     <!-- CSS  -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -15,9 +15,9 @@
 <body>
 <nav class="orange lighten-2" role="navigation">
     <div class="nav-wrapper container">
-        <a id="logo-container" href="#!" class="brand-logo">Email Cleaner</a>
-        {{#if user.email}}
-            <ul class="right hide-on-med-and-down">
+        <a id="logo-container" href="/" class="brand-logo">EmailCleaner</a>
+        <ul class="right hide-on-med-and-down">
+            {{#if user.email}}
                 <li>
                     <a class="dropdown-trigger" href="#!" data-target="user-dropdown">
                         {{user.email}}
@@ -29,13 +29,21 @@
                         </li>
                     </ul>
                 </li>
-            </ul>
-        {{/if}}
+            {{else}}
+                <li>
+                    <a href="/">Nettoyer votre boîte mail</a>
+                </li>
+            {{/if}}
+        </ul>
 
         <ul id="nav-mobile" class="sidenav">
             {{#if user.email}}
                 <li>
                     <h5>{{user.email}}</h5>
+                </li>
+            {{else}}
+                <li>
+                    <a href="/">Nettoyer votre boîte mail</a>
                 </li>
             {{/if}}
             <li>
@@ -54,10 +62,10 @@
                 <div class="col l6 s12">
                     <h5 class="white-text">Notre projet</h5>
                     <p class="grey-text text-lighten-4">
-                        Email cleaner vous permet de reprendre le contrôle de votre messagerie.
+                        EmailCleaner vous permet de reprendre le contrôle de votre messagerie.
                         Cet outil est open source et prend soin de vos données personnelles.
-                        Tout le monde peut accèder au code source de Email cleaner sur <a href="https://github.com/aektos/emailcleaner" target="_blank">github</a>.
-                        Email cleaner n'enregistre pas, ne réalise pas de statistiques et ne revend pas vos données
+                        Tout le monde peut accèder au code source de EmailCleaner sur <a href="https://github.com/aektos/emailcleaner" target="_blank">github</a>.
+                        EmailCleaner n'enregistre pas, ne réalise pas de statistiques et ne revend pas vos données
                         personnelles.
                     </p>
                 </div>
@@ -82,7 +90,7 @@
         </div>
         <div class="footer-copyright">
             <div class="container">
-                &copy; Email Cleaner 2019
+                &copy; EmailCleaner 2019
             </div>
         </div>
     </footer>

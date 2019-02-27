@@ -1,5 +1,12 @@
-.brand-logo {
+nav .brand-logo {
     color: #424242 !important;
+}
+
+@media screen and (min-width: 200px) and (max-width: 480px) {
+    nav .brand-logo {
+        width: 100%;
+        text-align: center;
+    }
 }
 
 nav ul a {
