@@ -32,6 +32,10 @@
                 $('#loader-modal').modal('close');
             });
 
+            app.socket.on('processing', function() {
+                $('#btn-kill').show();
+            });
+
             app.socket.on('error', function (data) {
                 $('#dashboard-loader').toggleClass('active');
                 $('#loader-modal').modal('close');
@@ -71,6 +75,17 @@
                     'messages': messages
                 });
             }
+        },
+        'kill': function () {
+            console.log('kill');
+            app.socket.emit('kill');
+
+            app.socket.on('killed', function() {
+                $('#kill-btn').hide();
+                $('#dashboard-loader').toggleClass('active');
+                $('#loader-modal').modal('close');
+                window.location = "/";
+            });
         }
     };
 
