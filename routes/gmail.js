@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const fs = require('fs');
 
-const googleServices = require('../services/googleServices');
-const gmailServices = require('../services/gmailServices');
+const GoogleServicesClass = require('../services/googleServices');
+const GmailServicesClass = require('../services/gmailServices');
+
+let googleServices = new GoogleServicesClass();
+let gmailServices = new GmailServicesClass(googleServices);
 
 /**
  * Generate and redirect to Google URL

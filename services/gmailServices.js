@@ -1,8 +1,5 @@
 const {google} = require('googleapis');
 
-const googleServices = require('./googleServices');
-const gmailSorterServices = require('./gmailSorterServices');
-
 /**
  * Max results GMAIL
  * @type {number}
@@ -14,7 +11,7 @@ const maxResults = 5000;
  */
 class GmailServices {
 
-    constructor() {
+    constructor(googleServices) {
 
         this.gmail = google.gmail({
             version: 'v1',
@@ -107,7 +104,7 @@ class GmailServices {
 
             allPromises
                 .then(() => {
-                    resolve(true);
+                    resolve(data);
                 })
                 .catch((err) => {
                     reject(err);
@@ -129,8 +126,8 @@ class GmailServices {
                 format: 'full'
             })
                 .then((res) => {
-                    gmailSorterServices.indexByEmail(res);
-                    resolve(res.data.snippet);
+                    // gmailSorterServices.indexByEmail(res);
+                    resolve(res);
                 })
                 .catch((err) => {
                     reject(err);
@@ -190,10 +187,4 @@ class GmailServices {
     }
 }
 
-/**
- * Singleton object definition
- */
-const gmailServicesObj = new GmailServices();
-Object.freeze(gmailServicesObj);
-
-module.exports = gmailServicesObj;
+module.exports = GmailServices;

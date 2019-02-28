@@ -1,21 +1,28 @@
-const googleServices = require('../services/googleServices');
-const gmailServices = require('../services/gmailServices');
-const gmailSorterServices = require('../services/gmailSorterServices');
+const GoogleServicesClass = require('../services/googleServices');
+const GmailServicesClass = require('../services/gmailServices');
+const GmailSorterServicesClass = require('../services/gmailSorterServices');
 
 module.exports = (socket) => {
     socket.on('gmail-clean', () => {
         if (socket.handshake.session.token_gmail) {
+            let googleServices = new GoogleServicesClass();
+            let gmailServices = new GmailServicesClass(googleServices);
+            let gmailSorterServices = new GmailSorterServicesClass();
+
             googleServices.oAuth2Client.setCredentials(socket.handshake.session.token_gmail);
             var startTime = Date.now();
             gmailServices.listMessages(null)
                 .then((messages) => {
                     return gmailServices.getAllMessages(messages);
                 })
-                .then(() => {
+                .then((messages) => {
+                    messages.shift();
+                    messages.forEach((message) => {
+                        gmailSorterServices.indexByEmail(message);
+                    });
                     var endTime = Date.now();
                     console.log('Gmail-clean time: ' + parseInt(endTime - startTime) + 'ms ');
                     let emailIndex = gmailSorterServices.getEmailsIndexToArray();
-                    gmailSorterServices.reset();
                     socket.emit('cleaned', emailIndex);
                 })
                 .catch((err) => {
@@ -29,6 +36,9 @@ module.exports = (socket) => {
 
     socket.on('gmail-delete', (data) => {
         if (socket.handshake.session.token_gmail) {
+            let googleServices = new GoogleServicesClass();
+            let gmailServices = new GmailServicesClass(googleServices);
+
             googleServices.oAuth2Client.setCredentials(socket.handshake.session.token_gmail);
             gmailServices.trashAllMessages(data.messages)
                 .then(() => {

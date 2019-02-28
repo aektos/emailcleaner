@@ -85,10 +85,4 @@ class OutlookSorterServices extends BaseSorterServices {
     }
 }
 
-/**
- * Singleton object definition
- */
-const outlookSorterServicesObj = new OutlookSorterServices();
-Object.freeze(outlookSorterServicesObj);
-
-module.exports = outlookSorterServicesObj;
+module.exports = OutlookSorterServices;

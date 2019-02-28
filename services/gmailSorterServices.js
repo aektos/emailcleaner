@@ -115,10 +115,4 @@ class GmailSorterServices extends BaseSorterServices {
     }
 }
 
-/**
- * Singleton object definition
- */
-const gmailSorterServicesObj = new GmailSorterServices();
-Object.freeze(gmailSorterServicesObj);
-
-module.exports = gmailSorterServicesObj;
+module.exports = GmailSorterServices;

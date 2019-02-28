@@ -2,8 +2,6 @@ const graph = require('@microsoft/microsoft-graph-client');
 const url = require('url');
 const querystring = require('querystring');
 
-const outlookSorterServices = require('./outlookSorterServices');
-
 /**
  * Class to interact with OUTLOOK API
  */
@@ -69,10 +67,7 @@ class OutlookServices {
             }
             query.get()
                 .then((result) => {
-                    let messages = result.value;
-                    messages.forEach((message, i) => {
-                        outlookSorterServices.indexByEmail(message);
-                    });
+                    let messages = typeof result.value !== 'undefined' ? result.value : [];
                     if (result['@odata.nextLink']) {
                         this
                             .listMessages(result['@odata.nextLink'])
@@ -144,10 +139,4 @@ class OutlookServices {
     }
 }
 
-/**
- * Singleton object definition
- */
-const outlookServicesObj = new OutlookServices();
-Object.freeze(outlookServicesObj);
-
-module.exports = outlookServicesObj;
+module.exports = OutlookServices;

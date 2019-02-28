@@ -54,10 +54,4 @@ class GoogleServices {
     }
 }
 
-/**
- * Singleton object definition
- */
-const googleServicesObj = new GoogleServices();
-Object.freeze(googleServicesObj);
-
-module.exports = googleServicesObj;
+module.exports = GoogleServices;

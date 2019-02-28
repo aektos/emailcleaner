@@ -47,10 +47,4 @@ class MicrosoftServices {
     }
 }
 
-/**
- * Singleton object definition
- */
-const microsoftServicesObj = new MicrosoftServices();
-Object.freeze(microsoftServicesObj);
-
-module.exports = microsoftServicesObj;
+module.exports = MicrosoftServices;

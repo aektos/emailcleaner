@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const fs = require('fs');
 
-const microsoftServices = require('../services/microsoftServices');
-const outlookServices = require('../services/outlookServices');
+const MicrosoftServicesClass = require('../services/microsoftServices');
+const OutlookServicesClass = require('../services/outlookServices');
+
+let microsoftServices = new MicrosoftServicesClass();
+let outlookServices = new OutlookServicesClass();
 
 /**
  * Generate and redirect to Microsoft URL
