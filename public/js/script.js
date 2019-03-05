@@ -1,6 +1,6 @@
 (function (window, document, $, Handlebars) {
     var app = {
-        'isAjaxPending': false,
+        'isDeleteting': false,
         'ui': function () {
             $('.sidenav').sidenav();
             $(".dropdown-trigger").dropdown();
@@ -52,24 +52,25 @@
             }
             var event = window.location.toString().indexOf('gmail') !== -1 ? "gmail-delete" : "outlook-delete";
 
-            if (!this.isAjaxPending) {
-                this.isAjaxPending = true;
+            $('#dashboard-loader').toggleClass('active');
+            $('#loader-modal').modal('open');
+
+            app.socket.on('deleted', function(data) {
+                $('#' + data.id).remove();
                 $('#dashboard-loader').toggleClass('active');
-                $('#loader-modal').modal('open');
+                $('#loader-modal').modal('close');
+                that.isDeleting = false;
+            });
 
-                app.socket.on('deleted', function(data) {
-                    $('#' + data.id).remove();
-                    $('#dashboard-loader').toggleClass('active');
-                    $('#loader-modal').modal('close');
-                    that.isAjaxPending = false;
-                });
+            app.socket.on('error', function (data) {
+                $('#dashboard-loader').toggleClass('active');
+                $('#loader-modal').modal('close');
+                $el.append('<p>Ops, the service is unavailable. Something has gone wrong.</p>');
+                that.isDeleting = false;
+            });
 
-                app.socket.on('error', function (data) {
-                    $('#dashboard-loader').toggleClass('active');
-                    $('#loader-modal').modal('close');
-                    $el.append('<p>Ops, the service is unavailable. Something has gone wrong.</p>');
-                });
-
+            if (!this.isDeleting) {
+                this.isDeleting = true;
                 app.socket.emit(event, {
                     'id': id,
                     'messages': messages
@@ -77,14 +78,18 @@
             }
         },
         'kill': function () {
-            console.log('kill');
+            var that = this;
             app.socket.emit('kill');
 
             app.socket.on('killed', function() {
                 $('#kill-btn').hide();
                 $('#dashboard-loader').toggleClass('active');
                 $('#loader-modal').modal('close');
-                window.location = "/";
+                if (that.isDeleting) {
+                    that.isDeleting = false;
+                } else {
+                    window.location = "/";
+                }
             });
         }
     };

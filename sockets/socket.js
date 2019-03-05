@@ -2,6 +2,7 @@ const killHelper = require('../helpers/killHelper');
 
 module.exports = (io) => {
     io.on('connection', (socket) => {
+        socket.handshake.session.nb_deleted = 0;
         socket.handshake.session.child = null;
         socket.handshake.session.save();
 
