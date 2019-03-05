@@ -17,7 +17,7 @@ module.exports = (socket, script, params, stdoutFunc, stderrFunc) => {
     });
 
     socket.handshake.session.child.on('exit', function (code) {
-        if (code !== 0) {
+        if (code !== null && code !== 0) {
             console.log(process.argv);
             console.log('Something bad happened\n');
         }
