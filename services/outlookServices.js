@@ -14,7 +14,7 @@ const NB_MSG_PER_PAGE_OUTLOOK = 50;
  *
  * @type {number}
  */
-const TOTAL_LIST_MSG_OUTLOOK = 1000;
+const TOTAL_LIST_MSG_OUTLOOK = 500;
 
 /**
  * Class to interact with OUTLOOK API

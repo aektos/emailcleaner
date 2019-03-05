@@ -48,7 +48,7 @@ class GmailSorterServices extends BaseSorterServices {
                 this.index['emails'][key]['size']++;
                 this.index['emails'][key]['isNewsletter'] = this.index['emails'][key]['isNewsletter'] ? true : this.isNewsLetterEmail(htmlBody);
                 this.index['emails'][key]['link'] = this.index['emails'][key]['link'] ? this.index['emails'][key]['links'] : this.getUnSubscribeLink(htmlBody);
-                this.index['emails'][key]['content'] = this.index['emails'][key]['content'] ? this.index['emails'][key]['content'] : '<p>NA</p>';
+                this.index['emails'][key]['content'] = this.index['emails'][key]['content'] ? this.index['emails'][key]['content'] : this.getContent(htmlBody);
                 this.index['emails'][key]['messages'].push(message.data.id);
             }
         });

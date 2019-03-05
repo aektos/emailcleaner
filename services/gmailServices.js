@@ -12,7 +12,7 @@ const NB_MSG_PER_PAGE_GMAIL = 50;
  *
  * @type {number}
  */
-const TOTAL_LIST_MSG_GMAIL = 50;
+const TOTAL_LIST_MSG_GMAIL = 100;
 
 /**
  * Class to interact with GMAIL API
