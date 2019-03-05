@@ -1,54 +1,38 @@
-const OutlookServicesClass = require('../services/outlookServices');
-const OutlookSorterServicesClass = require('../services/outlookSorterServices');
+const childHelper = require('../helpers/childHelper');
 
 module.exports = (socket) => {
     socket.on('outlook-clean', () => {
-        let outlookServices = new OutlookServicesClass();
-        let outlookSorterServices = new OutlookSorterServicesClass();
-
-        if (socket.handshake.session.token_outlook) {
-            var startTime = Date.now();
-            outlookServices.getOutlook(socket.handshake.session.token_outlook);
-            outlookServices.listMessages()
-                .then((messages) => {
-                    messages.forEach((message, i) => {
-                        outlookSorterServices.indexByEmail(message);
-                    });
-
-                    var endTime = Date.now();
-                    console.log('Outlook-clean time: ' + parseInt(endTime - startTime) + 'ms ');
-                    let emailIndex = outlookSorterServices.getEmailsIndexToArray();
-                    socket.emit('cleaned', emailIndex);
-                })
-                .catch((err) => {
-                    socket.emit('error', err);
-                    reject(err);
-                })
+        if (socket.handshake.session.token_outlook && socket.handshake.session.child === null) {
+            childHelper(socket, ['./scripts/outlook_clean.js',
+                    JSON.stringify(socket.handshake.session.token_outlook)],
+                (data) => {
+                    socket.emit('cleaned', JSON.parse(data.toString()));
+                },
+                (data) => {
+                    socket.emit('error', 'Ops, something has gone wrong.');
+                }
+            );
         } else {
             socket.emit('error', 'Ops, something has gone wrong: session lost.');
         }
     });
 
     socket.on('outlook-delete', (data) => {
-        if (socket.handshake.session.token_outlook) {
-            let outlookServices = new OutlookServicesClass();
-
-            outlookServices.getOutlook(socket.handshake.session.token_outlook);
-            outlookServices.trashAllMessages(data.messages)
-                .then(() => {
-                    socket.handshake.session.nb_deleted += data.messages.length;
+        if (socket.handshake.session.token_outlook && socket.handshake.session.child === null) {
+            childHelper(socket,
+                ['./scripts/outlook_delete.js', JSON.stringify(socket.handshake.session.token_outlook), JSON.stringify(data)],
+                (data) => {
+                    data = JSON.parse(data);
+                    socket.emit('deleted', data);
+                    socket.handshake.session.nb_deleted += data.nb_deleted;
+                    console.log(data.nb_deleted);
+                    console.log(socket.handshake.session.nb_deleted);
                     socket.handshake.session.save();
-                    console.log('Outlook-delete msg.length: ' + data.messages.length + ' ');
-                    socket.emit('deleted', {
-                        id: data.id,
-                        nb_deleted: data.messages.length,
-                        delete: true
-                    });
-                })
-                .catch((err) => {
-                    socket.emit('error', err);
-                    reject(err);
-                });
+                },
+                (data) => {
+                    socket.emit('error', 'Ops, something has gone wrong.');
+                }
+            );
         } else {
             socket.emit('error', 'Ops, something has gone wrong: session lost.');
         }

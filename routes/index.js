@@ -15,13 +15,9 @@ router.get('/', (req, res, next) => {
  * Signout by destroying session
  */
 router.get('/signout', (req, res, next) => {
-    if (!req.session.token) {
+    if (typeof req.session.token_gmail === 'undefined' && typeof !req.session.token_outlook === 'undefined') {
         res.redirect('/');
     } else {
-        if (process.env.NODE_ENV === 'development' && fs.existsSync(config.TOKEN_PATH)) {
-            fs.unlinkSync(config.TOKEN_GMAIL_PATH);
-            fs.unlinkSync(config.TOKEN_OUTLOOK_PATH);
-        }
         let nb_deleted = req.session.nb_deleted;
         req.session.destroy();
 

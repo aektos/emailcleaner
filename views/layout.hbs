@@ -37,18 +37,26 @@
         </ul>
 
         <ul id="nav-mobile" class="sidenav">
+            <li>
+                <a href="/">EmailCleaner</a>
+            </li>
             {{#if user.email}}
                 <li>
-                    <h5>{{user.email}}</h5>
+                    <a class="dropdown-trigger" href="#!" data-target="user-dropdown">
+                        {{user.email}}
+                        <i class="material-icons right">arrow_drop_down</i>
+                    </a>
+                    <ul id="user-dropdown" class="dropdown-content">
+                        <li>
+                            <a href="/signout">Déconnexion</a>
+                        </li>
+                    </ul>
                 </li>
             {{else}}
                 <li>
                     <a href="/">Nettoyer votre boîte mail</a>
                 </li>
             {{/if}}
-            <li>
-                <a href="/signout">Déconnexion</a>
-            </li>
         </ul>
         <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
     </div>
