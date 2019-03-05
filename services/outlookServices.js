@@ -3,6 +3,20 @@ const url = require('url');
 const querystring = require('querystring');
 
 /**
+ * Number of messages per page
+ *
+ * @type {number}
+ */
+const NB_MSG_PER_PAGE_OUTLOOK = 50;
+
+/**
+ * Total number of messages to list
+ *
+ * @type {number}
+ */
+const TOTAL_LIST_MSG_OUTLOOK = 1000;
+
+/**
  * Class to interact with OUTLOOK API
  */
 class OutlookServices {
@@ -50,15 +64,16 @@ class OutlookServices {
      * Get a message by id
      *
      * @param pageToken
+     * @param total
      * @returns {Promise}
      */
-    listMessages(pageToken) {
+    listMessages(pageToken, total = 0) {
         return new Promise((resolve, reject) => {
             let query = this.outlook.client
                 .api('/me/mailfolders/inbox/messages')
-                .top(20)
+                .top(NB_MSG_PER_PAGE_OUTLOOK)
                 .select('subject,from,receivedDateTime,isRead,body')
-                .orderby('receivedDateTime ASC');
+                .orderby('receivedDateTime DESC');
 
             if (pageToken) {
                 let parsedUrl = url.parse(pageToken);
@@ -68,9 +83,10 @@ class OutlookServices {
             query.get()
                 .then((result) => {
                     let messages = typeof result.value !== 'undefined' ? result.value : [];
-                    if (result['@odata.nextLink']) {
+                    total += NB_MSG_PER_PAGE_OUTLOOK;
+                    if (result['@odata.nextLink'] && total + NB_MSG_PER_PAGE_OUTLOOK <= TOTAL_LIST_MSG_OUTLOOK) {
                         this
-                            .listMessages(result['@odata.nextLink'])
+                            .listMessages(result['@odata.nextLink'], total)
                             .then((data) => {
                                 messages = messages.concat(data);
                                 resolve(messages);

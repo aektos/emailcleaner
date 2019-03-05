@@ -1,10 +1,9 @@
 const OutlookServicesClass = require('../services/outlookServices');
-const fs = require('fs');
 
 process.on('exit', function (code) {
     if (code !== 0) {
-        console.error(process.argv);
-        console.error('Something bad happened\n');
+        console.log(process.argv);
+        console.log('Something bad happened\n');
     }
 });
 
@@ -18,13 +17,14 @@ if (token_outlook && typeof data.messages !== 'undefined') {
     outlookServices.getOutlook(token_outlook);
     outlookServices.trashAllMessages(data.messages)
         .then(() => {
-            console.log(JSON.stringify({
+            proccess.send({
                 id: data.id,
                 nb_deleted: data.messages.length,
                 delete: true
-            }));
+            });
         })
         .catch((err) => {
+            console.error(err);
             process.exit(3);
         });
 } else {

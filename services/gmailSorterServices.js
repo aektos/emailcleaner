@@ -28,6 +28,10 @@ class GmailSorterServices extends BaseSorterServices {
      */
     indexByEmail(message) {
         var key = null;
+        if ( typeof message.data !== 'undefined'
+            && typeof message.data.payload !== 'undefined'
+            && typeof message.data.payload.headers !== 'undefined'
+    )
         message.data.payload.headers.forEach((header, i) => {
             key = new MD5().update(header.value).digest('hex');
             if (header.name === "From") {

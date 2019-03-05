@@ -1,11 +1,10 @@
 const GoogleServicesClass = require('../services/googleServices');
 const GmailServicesClass = require('../services/gmailServices');
 
-
 process.on('exit', function (code) {
     if (code !== 0) {
-        console.error(process.argv);
-        console.error('Something bad happened\n');
+        console.log(process.argv);
+        console.log('Something bad happened\n');
     }
 });
 
@@ -20,13 +19,14 @@ if (token_gmail && typeof data.messages !== 'undefined') {
     googleServices.oAuth2Client.setCredentials(token_gmail);
     gmailServices.trashAllMessages(data.messages)
         .then(() => {
-            console.log(JSON.stringify({
+            process.send({
                 id: data.id,
                 nb_deleted: data.messages.length,
                 delete: true
-            }));
+            });
         })
         .catch((err) => {
+            console.error(err);
             process.exit(3);
         });
 } else {

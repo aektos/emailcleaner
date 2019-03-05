@@ -1,10 +1,18 @@
 const {google} = require('googleapis');
 
 /**
- * Max results GMAIL
+ * Number of messages per page
+ *
  * @type {number}
  */
-const maxResults = 5000;
+const NB_MSG_PER_PAGE_GMAIL = 50;
+
+/**
+ * Total number of messages to list
+ *
+ * @type {number}
+ */
+const TOTAL_LIST_MSG_GMAIL = 50;
 
 /**
  * Class to interact with GMAIL API
@@ -43,20 +51,22 @@ class GmailServices {
      * Lists the messages in the user's account.
      *
      * @param pageToken
+     * @param total
      * @returns {Promise}
      */
-    listMessages(pageToken) {
+    listMessages(pageToken, total = 0) {
         return new Promise((resolve, reject) => {
             this.gmail.users.messages.list({
                 userId: 'me',
-                maxResults: maxResults,
+                maxResults: NB_MSG_PER_PAGE_GMAIL,
                 pageToken: pageToken,
                 includeSpamTrash: false
             }).then((res) => {
-                let messages = res.data.messages;
+                let messages = typeof res.data.messages !== 'undefined' && typeof res.data.messages !== 'undefined' ? res.data.messages : [];
                 if (messages.length) {
-                    if (res.data.nextPageToken) {
-                        this.listMessages(res.data.nextPageToken)
+                    total += NB_MSG_PER_PAGE_GMAIL;
+                    if (res.data.nextPageToken && total + NB_MSG_PER_PAGE_GMAIL <= TOTAL_LIST_MSG_GMAIL) {
+                        this.listMessages(res.data.nextPageToken, total)
                             .then((res) => {
                                 messages = messages.concat(res);
                                 resolve(messages);
@@ -91,10 +101,6 @@ class GmailServices {
                 resolve(null);
             });
             let data = [];
-            if (process.env.NODE_ENV === 'development') {
-                messages = messages.slice(0, 30);
-            }
-            // console.log('total: ' + messages.length);
             messages.forEach((message) => {
                 allPromises = allPromises.then((msg) => {
                     data.push(msg);
@@ -113,6 +119,29 @@ class GmailServices {
     }
 
     /**
+     * Get all the messages in the user's account.
+     *
+     *@param messages
+     * @returns {Promise}
+     */
+    getSubAllMessages(messages) {
+        return new Promise((resolve, reject) => {
+            if (!messages.length) {
+                resolve([]);
+            }
+            let allPromises = [];
+            messages.forEach((message) => {
+                allPromises.push(this.getMessage(message.id));
+            });
+            Promise.all(allPromises).then((data) => {
+                resolve(data);
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    }
+
+    /**
      * Get a message by id
      *
      * @param id An authorized OAuth2 client.
@@ -126,7 +155,6 @@ class GmailServices {
                 format: 'full'
             })
                 .then((res) => {
-                    // gmailSorterServices.indexByEmail(res);
                     resolve(res);
                 })
                 .catch((err) => {

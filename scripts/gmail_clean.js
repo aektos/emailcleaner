@@ -1,12 +1,11 @@
 const GoogleServicesClass = require('../services/googleServices');
 const GmailServicesClass = require('../services/gmailServices');
 const GmailSorterServicesClass = require('../services/gmailSorterServices');
-const fs = require('fs');
 
 process.on('exit', function (code) {
     if (code !== 0) {
-        console.error(process.argv);
-        console.error('Something bad happened\n');
+        console.log(process.argv);
+        console.log('Something bad happened\n');
     }
 });
 
@@ -32,10 +31,11 @@ if (token_gmail) {
             // var endTime = Date.now();
             // console.log('Gmail-clean time: ' + parseInt(endTime - startTime) + 'ms ');
             let emailIndex = gmailSorterServices.getEmailsIndexToArray();
-            console.log(JSON.stringify(emailIndex));
+            process.send(emailIndex);
             process.exit(0);
         })
         .catch((err) => {
+            console.error(err);
             process.exit(2);
         });
 } else {

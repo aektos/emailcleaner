@@ -3,8 +3,8 @@ const OutlookSorterServicesClass = require('../services/outlookSorterServices');
 
 process.on('exit', function (code) {
     if (code !== 0) {
-        console.error(process.argv);
-        console.error('Something bad happened\n');
+        console.log(process.argv);
+        console.log('Something bad happened\n');
     }
 });
 
@@ -26,10 +26,11 @@ if (token_outlook) {
             // var endTime = Date.now();
             // console.log('Outlook-clean time: ' + parseInt(endTime - startTime) + 'ms ');
             let emailIndex = outlookSorterServices.getEmailsIndexToArray();
-            console.log(JSON.stringify(emailIndex));
+            process.send(emailIndex);
             process.exit(0);
         })
         .catch((err) => {
+            console.error(err);
             process.exit(2);
         })
 } else {
