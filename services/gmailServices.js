@@ -5,14 +5,14 @@ const {google} = require('googleapis');
  *
  * @type {number}
  */
-const NB_MSG_PER_PAGE_GMAIL = 50;
+const NB_MSG_PER_PAGE_GMAIL = 10;
 
 /**
  * Total number of messages to list
  *
  * @type {number}
  */
-const TOTAL_LIST_MSG_GMAIL = 100;
+const TOTAL_LIST_MSG_GMAIL = 30;
 
 /**
  * Class to interact with GMAIL API
@@ -65,7 +65,7 @@ class GmailServices {
                 let messages = typeof res.data.messages !== 'undefined' && typeof res.data.messages !== 'undefined' ? res.data.messages : [];
                 if (messages.length) {
                     total += NB_MSG_PER_PAGE_GMAIL;
-                    if (res.data.nextPageToken && total + NB_MSG_PER_PAGE_GMAIL <= TOTAL_LIST_MSG_GMAIL) {
+                    if (res.data.nextPageToken && total <= TOTAL_LIST_MSG_GMAIL) {
                         this.listMessages(res.data.nextPageToken, total)
                             .then((res) => {
                                 messages = messages.concat(res);

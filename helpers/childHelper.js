@@ -1,7 +1,7 @@
  const fork = require('child_process').fork;
 
 module.exports = (socket, script, params, stdoutFunc, stderrFunc) => {
-    socket.handshake.session.child = fork(script, params, { silent: true });
+    socket.handshake.session.child = fork(script, params);
     socket.emit('processing', true);
 
     socket.handshake.session.child.on('message', stdoutFunc);
@@ -14,6 +14,13 @@ module.exports = (socket, script, params, stdoutFunc, stderrFunc) => {
         }
         socket.handshake.session.child = null;
         socket.handshake.session.save();
+    });
+
+    socket.handshake.session.child.on('exit', function (code) {
+        if (code !== 0) {
+            console.log(process.argv);
+            console.log('Something bad happened\n');
+        }
     });
 
     socket.handshake.session.save();

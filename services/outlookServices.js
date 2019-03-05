@@ -84,7 +84,7 @@ class OutlookServices {
                 .then((result) => {
                     let messages = typeof result.value !== 'undefined' ? result.value : [];
                     total += NB_MSG_PER_PAGE_OUTLOOK;
-                    if (result['@odata.nextLink'] && total + NB_MSG_PER_PAGE_OUTLOOK <= TOTAL_LIST_MSG_OUTLOOK) {
+                    if (result['@odata.nextLink'] && total <= TOTAL_LIST_MSG_OUTLOOK) {
                         this
                             .listMessages(result['@odata.nextLink'], total)
                             .then((data) => {
