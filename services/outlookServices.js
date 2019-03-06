@@ -65,9 +65,10 @@ class OutlookServices {
      *
      * @param pageToken
      * @param total
+     * @param socket
      * @returns {Promise}
      */
-    listMessages(pageToken, total = 0) {
+    listMessages(pageToken, total = 0, socket) {
         return new Promise((resolve, reject) => {
             let query = this.outlook.client
                 .api('/me/mailfolders/inbox/messages')
@@ -84,9 +85,12 @@ class OutlookServices {
                 .then((result) => {
                     let messages = typeof result.value !== 'undefined' ? result.value : [];
                     total += NB_MSG_PER_PAGE_OUTLOOK;
+                    if (!socket.handshake.session.isConnected) {
+                        throw 'user disconnected';
+                    }
                     if (result['@odata.nextLink'] && total <= TOTAL_LIST_MSG_OUTLOOK) {
                         this
-                            .listMessages(result['@odata.nextLink'], total)
+                            .listMessages(result['@odata.nextLink'], total, socket)
                             .then((data) => {
                                 messages = messages.concat(data);
                                 resolve(messages);
@@ -108,14 +112,18 @@ class OutlookServices {
      * Delete a message by id
      *
      * @param messageId
+     * @param socket
      * @returns {Promise}
      */
-    trashMessage(messageId) {
+    trashMessage(messageId, socket) {
         return new Promise((resolve, reject) => {
             let query = this.outlook.client
                 .api('/me/messages/' + messageId + "/move");
             query.post({"destinationId": "deleteditems"})
                 .then(() => {
+                    if (!socket.handshake.session.isConnected) {
+                        throw 'user disconnected';
+                    }
                     resolve(true);
                 })
                 .catch((err) => {
@@ -128,9 +136,10 @@ class OutlookServices {
      * Trash all messages from the list 'messages"
      *
      * @param messages
+     * @param socket
      * @returns {Promise}
      */
-    trashAllMessages(messages) {
+    trashAllMessages(messages, socket) {
         return new Promise((resolve, reject) => {
             if (!messages.length) {
                 resolve([]);
@@ -146,6 +155,9 @@ class OutlookServices {
 
             allPromises
                 .then(() => {
+                    if (!socket.handshake.session.isConnected) {
+                        throw 'user disconnected';
+                    }
                     resolve(true);
                 })
                 .catch((err) => {

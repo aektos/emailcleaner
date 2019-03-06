@@ -1,39 +1,61 @@
-const childHelper = require('../helpers/childHelper');
+const OutlookServicesClass = require('../services/outlookServices');
+const OutlookSorterServicesClass = require('../services/outlookSorterServices');
 
 module.exports = (socket) => {
     socket.on('outlook-clean', () => {
-        if (socket.handshake.session.token_outlook && socket.handshake.session.child === null) {
-            childHelper(socket,
-                './scripts/outlook_clean.js',
-                [JSON.stringify(socket.handshake.session.token_outlook)],
-                (data) => {
-                    socket.emit('cleaned', data);
-                },
-                (data) => {
-                    socket.emit('error', 'Ops, something has gone wrong.');
-                }
-            );
+        if (socket.handshake.session.token_outlook) {
+            let outlookServices = new OutlookServicesClass();
+            let outlookSorterServices = new OutlookSorterServicesClass();
+
+            if (socket.handshake.session.token_outlook) {
+                // var startTime = Date.now();
+                outlookServices.getOutlook(socket.handshake.session.token_outlook);
+                outlookServices.listMessages(null, 0, socket)
+                    .then((messages) => {
+                        messages.forEach((message, i) => {
+                            outlookSorterServices.indexByEmail(message);
+                        });
+
+                        // var endTime = Date.now();
+                        // console.log('Outlook-clean time: ' + parseInt(endTime - startTime) + 'ms ');
+                        let emailIndex = outlookSorterServices.getEmailsIndexToArray();
+                        socket.emit('cleaned', emailIndex);
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        socket.emit('error', 'Ops, something has gone wrong.');
+                    })
+            } else {
+                socket.emit('error', 'Ops, something has gone wrong.');
+            }
         } else {
             socket.emit('error', 'Ops, something has gone wrong: session lost.');
         }
     });
 
     socket.on('outlook-delete', (data) => {
-        if (socket.handshake.session.token_outlook && socket.handshake.session.child === null) {
-            childHelper(socket,
-                './scripts/outlook_delete.js',
-                [ JSON.stringify(socket.handshake.session.token_outlook), JSON.stringify(data)],
-                (data) => {
-                    socket.emit('deleted', data);
-                    socket.handshake.session.nb_deleted += data.nb_deleted;
-                    console.log(data.nb_deleted);
-                    console.log(socket.handshake.session.nb_deleted);
-                    socket.handshake.session.save();
-                },
-                (data) => {
-                    socket.emit('error', 'Ops, something has gone wrong.');
-                }
-            );
+        if (socket.handshake.session.token_outlook) {
+            let outlookServices = new OutlookServicesClass();
+
+            if (token_outlook && typeof data.messages !== 'undefined') {
+                outlookServices.getOutlook(token_outlook);
+                outlookServices.trashAllMessages(data.messages, socket)
+                    .then(() => {
+                        socket.emit('deleted', {
+                            id: data.id,
+                            nb_deleted: data.messages.length,
+                            delete: true
+                        });
+                        socket.handshake.session.nb_deleted += data.nb_deleted;
+                        socket.handshake.session.save();
+                    })
+                    .catch((err) => {
+                        socket.emit('error', 'Ops, something has gone wrong.');
+                        reject(err);
+                    });
+            } else {
+                socket.emit('error', 'Ops, something has gone wrong.');
+            }
         } else {
             socket.emit('error', 'Ops, something has gone wrong: session lost.');
         }
