@@ -52,9 +52,10 @@ class GmailServices {
      *
      * @param pageToken
      * @param total
+     * @param socket
      * @returns {Promise}
      */
-    listMessages(pageToken, total = 0) {
+    listMessages(pageToken, total = 0, socket) {
         return new Promise((resolve, reject) => {
             this.gmail.users.messages.list({
                 userId: 'me',
@@ -62,11 +63,14 @@ class GmailServices {
                 pageToken: pageToken,
                 includeSpamTrash: false
             }).then((res) => {
+                if (!socket.handshake.session.isConnected) {
+                    throw 'user disconnected';
+                }
                 let messages = typeof res.data.messages !== 'undefined' && typeof res.data.messages !== 'undefined' ? res.data.messages : [];
                 if (messages.length) {
                     total += NB_MSG_PER_PAGE_GMAIL;
                     if (res.data.nextPageToken && total <= TOTAL_LIST_MSG_GMAIL) {
-                        this.listMessages(res.data.nextPageToken, total)
+                        this.listMessages(res.data.nextPageToken, total, socket)
                             .then((res) => {
                                 messages = messages.concat(res);
                                 resolve(messages);
@@ -90,9 +94,10 @@ class GmailServices {
      * Get all the messages in the user's account.
      *
      * @param messages
+     * @param socket
      * @returns {Promise}
      */
-    getAllMessages(messages) {
+    getAllMessages(messages, socket) {
         return new Promise((resolve, reject) => {
             if (!messages.length) {
                 resolve([]);
@@ -103,8 +108,11 @@ class GmailServices {
             let data = [];
             messages.forEach((message) => {
                 allPromises = allPromises.then((msg) => {
+                    if (!socket.handshake.session.isConnected) {
+                        throw 'user disconnected';
+                    }
                     data.push(msg);
-                    return this.getMessage(message.id);
+                    return this.getMessage(message.id, socket);
                 });
             });
 
@@ -124,16 +132,19 @@ class GmailServices {
      *@param messages
      * @returns {Promise}
      */
-    getSubAllMessages(messages) {
+    getSubAllMessages(messages, socket) {
         return new Promise((resolve, reject) => {
             if (!messages.length) {
                 resolve([]);
             }
             let allPromises = [];
             messages.forEach((message) => {
-                allPromises.push(this.getMessage(message.id));
+                allPromises.push(this.getMessage(message.id, socket));
             });
             Promise.all(allPromises).then((data) => {
+                if (!socket.handshake.session.isConnected) {
+                    throw 'user disconnected';
+                }
                 resolve(data);
             }).catch((err) => {
                 reject(err);
@@ -144,10 +155,11 @@ class GmailServices {
     /**
      * Get a message by id
      *
-     * @param id An authorized OAuth2 client.
+     * @param id
+     * @param socket
      * @returns {Promise}
      */
-    getMessage(id) {
+    getMessage(id, socket) {
         return new Promise((resolve, reject) => {
             this.gmail.users.messages.get({
                 id: id,
@@ -155,6 +167,9 @@ class GmailServices {
                 format: 'full'
             })
                 .then((res) => {
+                    if (!socket.handshake.session.isConnected) {
+                        throw 'user disconnected';
+                    }
                     resolve(res);
                 })
                 .catch((err) => {
@@ -166,16 +181,20 @@ class GmailServices {
     /**
      * Move a message by id to trash
      *
-     * @param id An authorized OAuth2 client.
-     * @returns {Promise}
+     * @param id
+     * @param socket
+     * @returns {Promise<any>}
      */
-    trashMessage(id) {
+    trashMessage(id, socket) {
         return new Promise((resolve, reject) => {
             this.gmail.users.messages.trash({
                 id: id,
                 userId: 'me',
             })
                 .then((res) => {
+                    if (!socket.handshake.session.isConnected) {
+                        throw 'user disconnected';
+                    }
                     resolve(true);
                 })
                 .catch((err) => {
@@ -188,9 +207,10 @@ class GmailServices {
      * Trash all messages from the list 'messages"
      *
      * @param messages
+     * @param socket
      * @returns {Promise}
      */
-    trashAllMessages(messages) {
+    trashAllMessages(messages, socket) {
         return new Promise((resolve, reject) => {
             if (!messages.length) {
                 resolve([]);
@@ -206,6 +226,9 @@ class GmailServices {
 
             allPromises
                 .then(() => {
+                    if (!socket.handshake.session.isConnected) {
+                        throw 'user disconnected';
+                    }
                     resolve(true);
                 })
                 .catch((err) => {
