@@ -5,14 +5,14 @@ const {google} = require('googleapis');
  *
  * @type {number}
  */
-const NB_MSG_PER_PAGE_GMAIL = 10;
+const NB_MSG_PER_PAGE_GMAIL = 20;
 
 /**
  * Total number of messages to list
  *
  * @type {number}
  */
-const TOTAL_LIST_MSG_GMAIL = 30;
+const TOTAL_LIST_MSG_GMAIL = 500;
 
 /**
  * Class to interact with GMAIL API

@@ -8,7 +8,7 @@ module.exports = (socket) => {
             let outlookSorterServices = new OutlookSorterServicesClass();
 
             if (socket.handshake.session.token_outlook) {
-                // var startTime = Date.now();
+                let startTime = Date.now();
                 outlookServices.getOutlook(socket.handshake.session.token_outlook);
                 outlookServices.listMessages(null, 0, socket)
                     .then((messages) => {
@@ -16,8 +16,8 @@ module.exports = (socket) => {
                             outlookSorterServices.indexByEmail(message);
                         });
 
-                        // var endTime = Date.now();
-                        // console.log('Outlook-clean time: ' + parseInt(endTime - startTime) + 'ms ');
+                        let endTime = Date.now();
+                        console.log('Outlook-clean time: ' + parseInt(endTime - startTime) + 'ms ');
                         let emailIndex = outlookSorterServices.getEmailsIndexToArray();
                         socket.emit('cleaned', emailIndex);
                     })

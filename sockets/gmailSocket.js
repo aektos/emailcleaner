@@ -11,7 +11,7 @@ module.exports = (socket) => {
 
             if (socket.handshake.session.token_gmail) {
                 googleServices.oAuth2Client.setCredentials(socket.handshake.session.token_gmail);
-                // var startTime = Date.now();
+                let startTime = Date.now();
                 gmailServices.listMessages(null, 0, socket)
                     .then((messages) => {
                         return gmailServices.getAllMessages(messages, socket);
@@ -21,8 +21,8 @@ module.exports = (socket) => {
                         messages.forEach((message) => {
                             gmailSorterServices.indexByEmail(message);
                         });
-                        // var endTime = Date.now();
-                        // console.log('Gmail-clean time: ' + parseInt(endTime - startTime) + 'ms ');
+                        let endTime = Date.now();
+                        console.log('Gmail-clean time: ' + parseInt(endTime - startTime) + 'ms ');
                         let emailIndex = gmailSorterServices.getEmailsIndexToArray();
                         socket.emit('cleaned', emailIndex);
                     })
