@@ -4,7 +4,7 @@
 
 The service is online here: https://emailcleaner.herokuapp.com
 
-![screenshot](/raw/master/screenshot.png?raw=true "Screenshot")
+![screenshot](/screenshot.png?raw=true "Screenshot")
 
 EmailCleaner is a tool to take over control on your hotmail or gmail box.
 It alloaws you to list by expeditors, delete batch of emails or identify and unsubscribe from undesired newsletters.
@@ -114,4 +114,4 @@ See also the list of [contributors](https://github.com/aektos/emailcleaner/contr
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details.
