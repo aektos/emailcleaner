@@ -1,5 +1,7 @@
 # EmailCleaner
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
 The service is online here: https://emailcleaner.herokuapp.com
 
 ![screenshot](/raw/master/screenshot.png?raw=true "Screenshot")
