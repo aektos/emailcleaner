@@ -1,6 +1,10 @@
 # EmailCleaner
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
 The service is online here: https://emailcleaner.herokuapp.com
+
+![screenshot](/raw/master/screenshot.png?raw=true "Screenshot")
 
 EmailCleaner is a tool to take over control on your hotmail or gmail box.
 It alloaws you to list by expeditors, delete batch of emails or identify and unsubscribe from undesired newsletters.
