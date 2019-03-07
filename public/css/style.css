@@ -60,3 +60,8 @@ nav ul a {
 #dashboard-wrapper .card .material-icons {
     color: #424242 !important;
 }
+
+.btn-outlook,
+.btn-gmail {
+    width: 500px;
+}

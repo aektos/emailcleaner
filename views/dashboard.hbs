@@ -1,10 +1,14 @@
 <div id="dashboard-wrapper">
     <div id="loader-modal" class="modal">
         <div class="modal-content">
-            <p class="center-align">
-                EmailCleaner est en train de chercher les emails dans votre boîte de messagerie.
+            <h5 class="center-align">
+                EmailCleaner est en train de rechercher et trier les emails dans votre boîte de messagerie.
                 Cette opération peut prendre un certain temps selon le degré de rangement de votre boîte.
-            </p>
+            </h5>
+            <P class="center-align">
+                Par soucis de disponibilité du service, EmailCleaner recherche et trie vos 500 derniers emails.
+                Ne fermer pas votre navigateur! Cette opération peut durer de 1 à 10 minutes!
+            </P>
             <div id="dashboard-loader" class="preloader-wrapper big active">
                 <div class="spinner-layer spinner-black-only">
                     <div class="circle-clipper left">
@@ -22,8 +26,8 @@
     </div>
     <div id="dashboard" class="dashboard"></div>
     <div id="dashboard-next">
-        <a class="btn-floating btn-large grey darken-3 right" href="/signout">
-            <i class="material-icons">navigate_next</i>
+        <a class="btn-large red right" href="/signout">
+            Terminer
         </a>
     </div>
 </div>
