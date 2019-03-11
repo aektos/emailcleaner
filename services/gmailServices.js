@@ -173,7 +173,8 @@ class GmailServices {
                     resolve(res);
                 })
                 .catch((err) => {
-                    reject(err);
+                    console.log(err);
+                    // reject(err); // don't reject to not block the loop in getAllMessages
                 })
         });
     }
@@ -198,7 +199,8 @@ class GmailServices {
                     resolve(true);
                 })
                 .catch((err) => {
-                    reject(err);
+                    console.log(err);
+                    // reject(err); // don't reject to not block the loop in trashAllMessages
                 })
         });
     }

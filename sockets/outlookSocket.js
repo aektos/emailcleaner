@@ -24,6 +24,7 @@ module.exports = (socket) => {
                     .catch((err) => {
                         console.error(err);
                         socket.emit('error', 'Ops, something has gone wrong.');
+                        reject(err);
                     })
             } else {
                 socket.emit('error', 'Ops, something has gone wrong.');
