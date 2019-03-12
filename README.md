@@ -79,7 +79,12 @@ It's an open source solution. There is no database storage in the app.
 
     ````
     $ docker build -t emailcleaner ./
-    $ docker run -d --name emailcleaner_app -p 80:3000 -v ${pwd}/:/var/www/html/app emailcleaner
+    
+    $ docker run -d --name emailcleaner_app -p 80:3000 -v `pwd`/:/var/www/html/app emailcleaner
+    
+    # pour windows:
+        $ docker run -d --name emailcleaner_app -p 80:3000 -v ${pwd}/:/var/www/html/app emailcleaner
+         
     $ docker exec -it emailcleaner_app sh -c "NODE_ENV=development npm start"
    ````
    
