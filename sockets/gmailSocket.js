@@ -46,7 +46,7 @@ module.exports = (socket) => {
 
             if (socket.handshake.session.token_gmail && typeof data.messages !== 'undefined') {
                 googleServices.oAuth2Client.setCredentials(socket.handshake.session.token_gmail);
-                gmailServices.trashAllMessages(data.messages)
+                gmailServices.trashAllMessages(data.messages, socket)
                     .then(() => {
                         socket.emit('deleted', {
                             id: data.id,

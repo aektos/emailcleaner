@@ -184,7 +184,7 @@ class GmailServices {
      *
      * @param id
      * @param socket
-     * @returns {Promise<any>}
+     * @returns {Promise}
      */
     trashMessage(id, socket) {
         return new Promise((resolve, reject) => {
@@ -222,7 +222,7 @@ class GmailServices {
             });
             messages.forEach((messageId) => {
                 allPromises = allPromises.then(() => {
-                    return this.trashMessage(messageId);
+                    return this.trashMessage(messageId, socket);
                 });
             });
 

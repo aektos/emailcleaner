@@ -149,7 +149,7 @@ class OutlookServices {
             });
             messages.forEach((messageId) => {
                 allPromises = allPromises.then(() => {
-                    return this.trashMessage(messageId);
+                    return this.trashMessage(messageId, socket);
                 });
             });
 
