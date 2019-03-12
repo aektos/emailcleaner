@@ -53,7 +53,7 @@ module.exports = (socket) => {
                             nb_deleted: data.messages.length,
                             delete: true
                         });
-                        socket.handshake.session.nb_deleted += data.nb_deleted;
+                        socket.handshake.session.nb_deleted += data.messages.length;
                         socket.handshake.session.save();
                     })
                     .catch((err) => {

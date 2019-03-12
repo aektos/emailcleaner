@@ -38,7 +38,7 @@ module.exports = (socket) => {
         if (socket.handshake.session.token_outlook) {
             let outlookServices = new OutlookServicesClass();
 
-            if (token_outlook && typeof data.messages !== 'undefined') {
+            if (typeof data.messages !== 'undefined') {
                 outlookServices.getOutlook(token_outlook);
                 outlookServices.trashAllMessages(data.messages, socket)
                     .then(() => {
@@ -47,7 +47,7 @@ module.exports = (socket) => {
                             nb_deleted: data.messages.length,
                             delete: true
                         });
-                        socket.handshake.session.nb_deleted += data.nb_deleted;
+                        socket.handshake.session.nb_deleted += data.messages.length;
                         socket.handshake.session.save();
                     })
                     .catch((err) => {
