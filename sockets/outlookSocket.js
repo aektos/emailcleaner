@@ -39,7 +39,7 @@ module.exports = (socket) => {
             let outlookServices = new OutlookServicesClass();
 
             if (typeof data.messages !== 'undefined') {
-                outlookServices.getOutlook(token_outlook);
+                outlookServices.getOutlook(socket.handshake.session.token_outlook);
                 outlookServices.trashAllMessages(data.messages, socket)
                     .then(() => {
                         socket.emit('deleted', {
