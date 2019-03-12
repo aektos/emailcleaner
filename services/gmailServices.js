@@ -127,32 +127,6 @@ class GmailServices {
     }
 
     /**
-     * Get all the messages in the user's account.
-     *
-     *@param messages
-     * @returns {Promise}
-     */
-    getSubAllMessages(messages, socket) {
-        return new Promise((resolve, reject) => {
-            if (!messages.length) {
-                resolve([]);
-            }
-            let allPromises = [];
-            messages.forEach((message) => {
-                allPromises.push(this.getMessage(message.id, socket));
-            });
-            Promise.all(allPromises).then((data) => {
-                if (!socket.handshake.session.isConnected) {
-                    throw 'user disconnected';
-                }
-                resolve(data);
-            }).catch((err) => {
-                reject(err);
-            });
-        });
-    }
-
-    /**
      * Get a message by id
      *
      * @param id
