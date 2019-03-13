@@ -75,7 +75,9 @@ class GmailSorterServices extends BaseSorterServices {
             typeof message.data.payload.parts !== 'undefined'
         ) {
             message.data.payload.parts.forEach((part, i) => {
-                if (part.mimeType === "text/html") {
+                if ( part.mimeType === "text/html"
+                    && typeof part.body !== 'undefined'
+                    && typeof part.body.data !== 'undefined' ) {
                     htmlBody = part.body.data;
                 }
             });
